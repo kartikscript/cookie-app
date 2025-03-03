@@ -31,10 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let cookieConsent = getCookie("cookieConsent");
 console.log(cookieConsent)
   if (!cookieConsent) {
+    console.log("cookieConsent not found");
       banner.style.display = "block";
   } else if (cookieConsent === "accepted") {
       loadGoogleAnalytics();
   }
+  console.log('running')
 });
 
 // Handle Accept Button
