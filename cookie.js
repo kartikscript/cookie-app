@@ -1,7 +1,10 @@
 const banner = document.getElementById("cookie-banner");
 const acceptBtn = document.getElementById("acceptBtn");
 const declineBtn = document.getElementById("declineBtn");
+const scriptTag = document.querySelector("script[src*='cookie.js']");
 
+const attribute = scriptTag.getAttribute("data-cookie");
+console.log(attribute);
 
 acceptBtn.addEventListener("click", acceptCookies);
 declineBtn.addEventListener("click", declineCookies);
@@ -18,8 +21,10 @@ function setCookie(name, value, days) {
 
 function getCookie(name) {
   let cookies = document.cookie.split("; ");
+  console.log(cookies)
   for (let i = 0; i < cookies.length; i++) {
       let parts = cookies[i].split("=");
+      console.log(parts)
       if (parts[0] === name) {
           return parts[1];
       }
@@ -29,7 +34,6 @@ function getCookie(name) {
 
 document.addEventListener("DOMContentLoaded", function () {
   let cookieConsent = getCookie("cookieConsent");
-console.log(cookieConsent)
   if (!cookieConsent) {
     console.log("cookieConsent not found");
       banner.style.display = "block";
