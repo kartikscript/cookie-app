@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1285px, initial-scale=1.0">
-  <title>Document</title>
+  <meta name="viewport" content="width=1285, initial-scale=1.0">
+  <title>Cookie-App</title>
   <link rel="stylesheet" href="styles.css" />
 
 </head>
@@ -11,12 +11,57 @@
 
   <h1>hellojs</h1>
   <div id="cookie-banner">
-    <p>This site uses cookies for analytics. Accept?</p>
+    <!-- <p>This site uses cookies for analytics. Accept?</p>
     <button id="acceptBtn">Accept</button>
-    <button id="declineBtn">Decline</button>
+    <button id="declineBtn">Decline</button> -->
+    <div cookie-component>
+      <div cookie-close-btn>close</div>
+      <div cookie-preferences="btn">preferences</div>
+      <div cta-btn="accept">accept</div>
+      <div cta-btn="deny">deny</div>
+
+      <!-- <div style="display: none" cookie-popup>all preferences page</div> -->
+    </div>
+    <div style="display: none" cookie-popup>
+        <div class="preference-item">
+          <input
+            cookie-pref-1
+            class="preference-input"
+            type="checkbox"
+            id="marketing"
+            name="marketing"
+            value="marketing"
+          />
+          <label for="marketing">Marketing</label>
+        </div>
+        <div class="preference-item">
+          <input
+            cookie-pref-2
+            class="preference-input"
+            type="checkbox"
+            id="personalization"
+            name="personalization"
+            value="personalization"
+          />
+          <label for="personalization">Personalization</label>
+        </div>
+        <div class="preference-item">
+          <input
+            cookie-pref-3
+            class="preference-input"
+            type="checkbox"
+            id="advertising"
+            name="advertising"
+            value="advertising"
+          />
+          <label for="advertising">analytics</label>
+        </div>
+        <div cta-btn='save-pref'>save prefs</div>
+
+    </div>
   </div>
   
   
-  <script type="module" data-cookie="test success" src="./cookie.js"></script>
+  <script type="module" mode="preference" src="./cookie.js"></script>
 </body>
 </html>

@@ -1,30 +1,88 @@
-const banner = document.getElementById("cookie-banner");
-const acceptBtn = document.getElementById("acceptBtn");
-const declineBtn = document.getElementById("declineBtn");
-const scriptTag = document.querySelector("script[src*='cookie.js']");
+const cookieComponent = document.querySelector("[cookie-component]");
+const preferenceComponent = document.querySelector("[cookie-popup]");
+const prefCheckbox1 = document.querySelector("[cookie-pref-1]");
+const prefCheckbox2 = document.querySelector("[cookie-pref-2]");
+const prefCheckbox3 = document.querySelector("[cookie-pref-3]");
+const closeBtn = document.querySelector("[cookie-close-btn]");
+const preferenceBtn = document.querySelector("[cookie-preferences='btn']");
+const savePrefBtn = document.querySelector("[cta-btn='save-pref']");
+const acceptBtn = document.querySelector("[cta-btn='accept']");
+const denyBtn = document.querySelector("[cta-btn='deny']");
 
-const attribute = scriptTag.getAttribute("data-cookie");
-console.log(attribute);
+closeBtn.addEventListener("click", () => {
+  cookieComponent.style.display = "none";
+});
+preferenceBtn.addEventListener("click", () => {
+  preferenceComponent.style.display = "flex";
+});
 
-acceptBtn.addEventListener("click", acceptCookies);
-declineBtn.addEventListener("click", declineCookies);
+let preferences = [
+  {
+    name: "marketing-cookie",
+    value: "declined",
+    days: "30",
+  },
+  {
+    name: "personalization-cookie",
+    value: "declined",
+    days: "30",
+  },
+  {
+    name: "analytics-cookie",
+    value: "declined",
+    days: "30",
+  },
+];
 
-function setCookie(name, value, days) {
-  let expires = "";
-  if (days) {
+
+
+[prefCheckbox1, prefCheckbox2, prefCheckbox3].forEach((el, prefIndex) => {
+  el?.addEventListener("change", (e) => {
+    const { checked } = e.target;
+    const value = checked ? "accepted" : "declined";
+    
+    preferences[prefIndex].value = value;
+    // console.log(preferences)
+  });
+});
+
+savePrefBtn.addEventListener("click", () => {
+  setCookie();
+  cookieComponent.style.display = "none";
+  preferenceComponent.style.display = "none";
+});
+
+acceptBtn.addEventListener("click", () => {
+  preferences.forEach((_,i) =>{
+    preferences[i].value = "accepted";
+  })  
+  setCookie();
+  cookieComponent.style.display = "none";
+});
+
+denyBtn.addEventListener("click", () => { 
+  setCookie();
+  cookieComponent.style.display = "none";
+});
+
+function setCookie() {
+  preferences.forEach((p) => {
+    const {name,value,days} = p;
+    let expires = "";
+    if (days) {
       let date = new Date();
       date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
       expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + value + "; path=/" + expires;
+    }
+    document.cookie = name + "=" + value + "; path=/" + expires;
+  });
 }
 
 function getCookie(name) {
   let cookies = document.cookie.split("; ");
-  console.log(cookies)
+  
   for (let i = 0; i < cookies.length; i++) {
       let parts = cookies[i].split("=");
-      console.log(parts)
       if (parts[0] === name) {
           return parts[1];
       }
@@ -33,28 +91,24 @@ function getCookie(name) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  let cookieConsent = getCookie("cookieConsent");
-  if (!cookieConsent) {
-    console.log("cookieConsent not found");
-      banner.style.display = "block";
-  } else if (cookieConsent === "accepted") {
-      loadGoogleAnalytics();
+  
+  const consentArr = preferences.map(p => {
+    const cookie = getCookie(p.name);
+    
+    if(cookie === 'accepted' && p.name === 'analytics-cookie') loadGoogleAnalytics(); 
+    if(cookie === 'accepted' && p.name === 'marketing-cookie') loadMarketingScript();
+    if(cookie === 'accepted' && p.name === 'personalization-cookie') loadPersonalizationScript();
+    return cookie;
+  })
+
+  if (consentArr.every(c => c === null)) {
+    cookieComponent.style.display = "block";
+  }else{
+    cookieComponent.style.display = "none";
   }
-  console.log('running')
 });
 
-// Handle Accept Button
-function acceptCookies() {
-  setCookie("cookieConsent", "accepted", 10);
-  banner.style.display = "none";
-  loadGoogleAnalytics();
-}
 
-// Handle Decline Button
-function declineCookies() {
-  setCookie("cookieConsent", "declined", 10);
-  banner.style.display = "none";
-}
 function loadGoogleAnalytics() {
   let script = document.createElement("script");
   script.src = "https://www.googletagmanager.com/gtag/js?id=G-0G59460CZ5";
@@ -62,9 +116,19 @@ function loadGoogleAnalytics() {
   document.head.appendChild(script);
 
   script.onload = function () {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      gtag("js", new Date());
-      gtag("config", "G-0G59460CZ5", { anonymize_ip: true });
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-0G59460CZ5");
   };
+}
+
+function loadMarketingScript(){
+  console.log('marketing script loaded')
+}
+
+function loadPersonalizationScript(){
+  console.log('personalization script loaded')
 }
